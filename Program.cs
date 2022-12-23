@@ -5,6 +5,9 @@ public static class Program
 {
     static async Task Main(string[] args)
     {
+        Console.WriteLine("Welcome to the Chuck Norris joke generator! Press any key to get a joke.");
+        Console.ForegroundColor = ConsoleColor.Red;
+
         // Create a service collection and configure the dependencies
         var serviceCollection = new ServiceCollection();
         ConfigureServices(serviceCollection);
