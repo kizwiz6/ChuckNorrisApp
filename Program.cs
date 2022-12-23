@@ -33,39 +33,52 @@ public static class Program
             // Wait for the user to press a key
             ConsoleKeyInfo key = Console.ReadKey();
 
-            // If the user pressed the left arrow key, go to the previous joke
-            if (key.Key == ConsoleKey.LeftArrow)
+            // Determine the appropriate action based on the key that was pressed
+            switch (key.Key)
             {
-                jokeIndex--;
-
-                if (jokeIndex < 0)
-                {
+                case ConsoleKey.LeftArrow:
+                    joke = GetPreviousJoke(jokes, ref jokeIndex);
+                    break;
+                case ConsoleKey.RightArrow:
+                    joke = GetNextJoke(jokes, ref jokeIndex);
+                    break;
+                case ConsoleKey.UpArrow:
+                    joke = await GetNewJoke(jokeService, jokes);
                     jokeIndex = jokes.Count - 1;
-                }
-
-                joke = jokes[jokeIndex];
-            }
-            else if (key.Key == ConsoleKey.RightArrow)
-            {
-                jokeIndex++;
-
-                if (jokeIndex >= jokes.Count)
-                {
-                    jokeIndex = 0;
-                }
-
-                joke = jokes[jokeIndex];
-            }
-            // If the user pressed the up arrow key, get a new joke
-            else if (key.Key == ConsoleKey.UpArrow)
-            {
-                joke = await jokeService.GetRandomJokeAsync();
-                jokes.Add(joke);
-                jokeIndex = jokes.Count - 1;
+                    break;
             }
         }
+    }
 
+    private static string GetPreviousJoke(List<string> jokes, ref int jokeIndex)
+    {
+        jokeIndex--;
 
+        if (jokeIndex < 0)
+        {
+            jokeIndex = jokes.Count - 1;
+        }
+
+        return jokes[jokeIndex];
+    }
+
+    private static string GetNextJoke(List<string> jokes, ref int jokeIndex)
+    {
+        jokeIndex++;
+
+        if (jokeIndex >= jokes.Count)
+        {
+            jokeIndex = 0;
+        }
+
+        return jokes[jokeIndex];
+    }
+
+    private static async Task<string> GetNewJoke(IJokeService jokeService, List<string> jokes)
+    {
+        string joke = await jokeService.GetRandomJokeAsync();
+        jokes.Add(joke);
+        return joke;
     }
 
     private static void ConfigureServices(IServiceCollection services)
