@@ -19,18 +19,27 @@ namespace ChuckNorrisApp
 
         public async Task<string> GetRandomJokeAsync()
         {
-            HttpResponseMessage response = await _httpClient.GetAsync("https://api.chucknorris.io/jokes/random");
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync("https://api.chucknorris.io/jokes/random");
 
-            if (response.IsSuccessStatusCode)
-            {
-                string responseContent = await response.Content.ReadAsStringAsync();
-                dynamic joke = Newtonsoft.Json.JsonConvert.DeserializeObject(responseContent);
-                return joke.value;
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    dynamic joke = Newtonsoft.Json.JsonConvert.DeserializeObject(responseContent);
+                    return joke.value;
+                }
+                else
+                {
+                    throw new Exception($"Request failed with status code {response.StatusCode}");
+                }
             }
-            else
+            catch (Exception)
             {
-                throw new Exception($"Request failed with status code {response.StatusCode}");
+                // Return an error message if an exception was thrown
+                return "An error occurred while retrieving the joke.";
             }
+
         }
     }
 }
