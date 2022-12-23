@@ -15,16 +15,54 @@ public static class Program
         // Get the IJokeService instance from the service provider
         var jokeService = serviceProvider.GetRequiredService<IJokeService>();
 
+        // Create a list to store the jokes
+        var jokes = new List<string>();
 
+        // Get the first joke
+        string joke = await jokeService.GetRandomJokeAsync();
+        jokes.Add(joke);
+
+        // Set the current joke index to 0
+        int jokeIndex = 0;
 
         while (true)
         {
-            // Wait for the user to press a key
-            Console.ReadKey();
-
-            // Get a random joke and print it to the console
-            string joke = await jokeService.GetRandomJokeAsync();
+            // Print the joke to the console
             Console.WriteLine(joke);
+
+            // Wait for the user to press a key
+            ConsoleKeyInfo key = Console.ReadKey();
+
+            // If the user pressed the left arrow key, go to the previous joke
+            if (key.Key == ConsoleKey.LeftArrow)
+            {
+                jokeIndex--;
+
+                if (jokeIndex < 0)
+                {
+                    jokeIndex = jokes.Count - 1;
+                }
+
+                joke = jokes[jokeIndex];
+            }
+            else if (key.Key == ConsoleKey.RightArrow)
+            {
+                jokeIndex++;
+
+                if (jokeIndex >= jokes.Count)
+                {
+                    jokeIndex = 0;
+                }
+
+                joke = jokes[jokeIndex];
+            }
+            // If the user pressed the up arrow key, get a new joke
+            else if (key.Key == ConsoleKey.UpArrow)
+            {
+                joke = await jokeService.GetRandomJokeAsync();
+                jokes.Add(joke);
+                jokeIndex = jokes.Count - 1;
+            }
         }
 
 
