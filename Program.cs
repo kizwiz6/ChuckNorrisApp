@@ -1,4 +1,4 @@
-﻿using ChuckNorrisApp;
+﻿using ChuckNorrisJokes;
 using Microsoft.Extensions.DependencyInjection;
 
 public static class Program
